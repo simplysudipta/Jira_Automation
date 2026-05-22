@@ -1,23 +1,34 @@
-from flask import Flask
+from flask import Flask, request
 import requests
 from requests.auth import HTTPBasicAuth
 import os
 import json
 
+
+
 app = Flask(__name__)
 
-@app.route('/create_issue', methods=['POST'])
+@app.route('/create_issue', methods=['POST', 'GET'])
 def create_issue():
     url = "https://simplysudipta.atlassian.net/rest/api/3/issue"
 
     API_TOKEN = os.getenv("API_TOKEN")
+    
+    # Extract summary from GitHub webhook payload
+    data = request.get_json()
+    if data and 'comment' in data and data['comment'].get('body'):
+        summary = data['comment']['body']
+    elif data and 'issue' in data and data['issue'].get('title'):
+        summary = data['issue']['title']
+    else:
+        summary = 'Default Issue Title'
 
     payload = {
         "fields": {
             "project": {
                 "key": "DS"
             },
-            "summary": "My first Jira issue",
+            "summary": summary,
             "description": {
                 "type": "doc",
                 "version": 1,
