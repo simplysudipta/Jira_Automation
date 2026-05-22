@@ -6,7 +6,7 @@ import json
 
 app = Flask(__name__)
 
-@app.route('/create_issue', methods=['GET', 'POST'])
+@app.route('/create_issue', methods=['POST'])
 def create_issue():
     url = "https://simplysudipta.atlassian.net/rest/api/3/issue"
 
